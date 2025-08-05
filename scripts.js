@@ -55,7 +55,7 @@ function setupEventListeners() {
   document
     .getElementById("paymentMoneyForm")
     .addEventListener("submit", (e) =>
-      preProcessTransaction(e, CATEGORIES.payment)
+      preProcessTransaction(e, CATEGORIES.PAYMENT)
     );
   document
     .getElementById("addMoneyForm")
@@ -128,7 +128,7 @@ function handleLogin(e) {
   currentUser = {
     name: "Rupok",
     phone,
-    email: "rupok@example.com",
+    email: "rupok@email.com",
     pin: "1234",
   };
   localStorage.setItem("rcash_user", JSON.stringify(currentUser));
@@ -228,8 +228,7 @@ function updateUI() {
       "profileTabPhone"
     ).textContent = `+880 ${currentUser.phone}`;
     document.getElementById("profileTabEmail").textContent = currentUser.email;
-    document.getElementById("profileTabAccountNumber").textContent =
-      currentUser.phone;
+    document.getElementById("profileTabAccountNumber").textContent =`+880 ${currentUser.phone}` ;
     document.getElementById("walletAccountNumber").textContent =
     `+880 ${currentUser.phone}` ;
     document.getElementById("walletCurrentBalance").textContent =
