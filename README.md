@@ -36,22 +36,6 @@ You can see the live project here:
 
 ---
 
-## 📂 How to Use
-
-To get a local copy up and running, follow these simple steps:
-
-1.  **Clone the repository:**
-    ```sh
-    git clone [https://github.com/rupokraihan/r-cash-mobile-banking.git](https://github.com/rupokraihan/r-cash-mobile-banking.git)
-    ```
-2.  **Navigate to the project folder:**
-    ```sh
-    cd r-cash-repository
-    ```
-3.  **Open `index.html` in your browser** and you're ready to go!
-
----
-
 ## 👨‍💻 About Me
 
 This project was created by **Rupok Raihan**. Feel free to check out my portfolio to see more of my work!
