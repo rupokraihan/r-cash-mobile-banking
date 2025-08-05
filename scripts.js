@@ -231,7 +231,7 @@ function updateUI() {
     document.getElementById("profileTabAccountNumber").textContent =
       currentUser.phone;
     document.getElementById("walletAccountNumber").textContent =
-      currentUser.phone;
+    `+880 ${currentUser.phone}` ;
     document.getElementById("walletCurrentBalance").textContent =
       formattedBalance;
   }
