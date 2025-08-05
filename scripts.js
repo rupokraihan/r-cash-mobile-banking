@@ -9,7 +9,7 @@ let autoSlideInterval = null;
 
 const CATEGORIES = {
   SEND: "send",
-  payment: "payment",
+ PAYMENT: "payment",
   ADD: "add",
   BILL_PAY: "bill_pay",
   CASH_IN: "cash_in",
@@ -465,7 +465,7 @@ function preProcessTransaction(e, category) {
         color: "purple",
       };
       break;
-    case CATEGORIES.payment:
+    case CATEGORIES.PAYMENT:
       details = {
         ...details,
         party: `+880 ${getVal("paymentFrom")}`,
@@ -475,7 +475,7 @@ function preProcessTransaction(e, category) {
         color: "orange",
       };
       break;
-
+/*
     case CATEGORIES.BILL_PAY:
       if (!selectedBiller) {
         showNotification(
@@ -493,7 +493,7 @@ function preProcessTransaction(e, category) {
         showNotification(
           "error",
           "Selection Required",
-          "Please select a source bank."
+          "Please select a source bank8."
         );
         details.isValid = false;
         break; // Stop processing if no bank is selected
@@ -516,6 +516,47 @@ function preProcessTransaction(e, category) {
         color: "gold",
       };
       break;
+      */
+     case CATEGORIES.BILL_PAY:
+  if (!selectedBiller) {
+    showNotification(
+      "error",
+      "Selection Required",
+      "Please select a biller."
+    );
+    details.isValid = false;
+    break;
+  }
+  details = {
+    ...details,
+    title: `${selectedBiller} Bill`,
+    amount: getNum("billAmount"),
+    party: selectedBiller,
+    icon: "fas fa-file-invoice-dollar",
+    color: "gold",
+  };
+  break;
+
+case CATEGORIES.ADD:
+  // 1. Check if a source bank was selected from the list
+  if (!selectedBank) {
+    showNotification(
+      "error",
+      "Selection Required",
+      "Please select a source bank8."
+    );
+    details.isValid = false;
+    break; // Stop processing if no bank is selected
+  }
+  details = {
+    ...details,
+    title: "Add Money",
+    amount: getNum("addAmount"), // Get amount from the input
+    party: `From ${selectedBank}`, // Use the selected bank as the party
+    icon: "fas fa-plus-circle",
+    color: "green",
+  };
+  break;
     case CATEGORIES.CASH_IN:
       details = {
         ...details,
@@ -603,7 +644,7 @@ function preProcessTransaction(e, category) {
     CATEGORIES.TO_BANK,
     CATEGORIES.MOBILE_RECHARGE,
     CATEGORIES.QR_PAY,
-    CATEGORIES.payment,
+    CATEGORIES.PAYMENT,
   ].includes(category);
   if (isExpense && details.amount > balance) {
     showNotification(
@@ -702,6 +743,7 @@ function showNotification(type, title, message) {
 function showTransactionConfirmation(txn) {
   document.getElementById("invoiceTxnId").textContent = txn.txnId;
   document.getElementById("invoiceType").textContent = txn.title;
+  document.getElementById("invoiceParty").textContent = txn.party;
   document.getElementById("invoiceAmount").textContent = `${
     txn.type === "income" ? "+" : "-"
   }$${txn.amount.toFixed(2)}`;

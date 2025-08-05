@@ -889,13 +889,13 @@
               <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
               <p>Water</p>
             </div>
-            <div class="selection-item" onclick="selectBiller(event, 'Internet Bill')">
-              <i class="fas fa-infinity text-red-600 text-xl mr-3"></i>
-              <p>Internet Bill</p>
+            <div class="selection-item" onclick="selectBiller(event, 'Internet')">
+              <i class="fas fa-wifi text-green-600 text-xl mr-3"></i>
+              <p>Internet</p>
             </div>
-            <div class="selection-item" onclick="selectBiller(event, 'Gas Bill')">
-              <i class="fas fa-sun text-green-600 text-xl mr-3"></i>
-              <p>Gas Bill</p>
+            <div class="selection-item" onclick="selectBiller(event, 'Gas')">
+              <i class="fas fa-sun text-red-600 text-xl mr-3"></i>
+              <p>Gas</p>
             </div>
           </div>
           <label class="mt-4">Amount</label>
@@ -1196,12 +1196,16 @@
             <span class="text-gray-600">Transaction ID:</span
             ><span
               id="invoiceTxnId"
-              class="font-mono text-xs font-bold text-velvet-purple"
+              class="font-mono text-sm font-bold text-velvet-purple"
             ></span>
           </div>
           <div class="summary-row">
             <span class="text-gray-600">Type:</span
             ><span id="invoiceType" class="font-bold"></span>
+          </div>
+          <div class="summary-row">
+            <span class="text-gray-600">Reciver:</span
+            ><span id="invoiceParty" class="font-bold"></span>
           </div>
           <div class="summary-row">
             <span class="text-gray-600">Amount:</span
