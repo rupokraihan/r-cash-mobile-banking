@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>R-Cash Mobile Banking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "velvet-purple": "#9C27B0",
+              "velvet-dark": "#311b92",
+              "velvet-light": "#7e57c2",
+              "velvet-gold": "#ffd700",
+              "velvet-pink": "#FF5722",
+              "velvet-blue": "#3949ab",
+              "velvet-redish": "#d32f2f",
+              "velvet-orange": "#f57c00",
+            },
+            fontFamily: { inter: ["Inter", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-gray-100 text-gray-800 antialiased">
+    <div id="notification" class="notification hide">
+      <div class="bg-white rounded-lg shadow-lg p-4 flex items-center">
+        <div id="notificationIcon" class="mr-3"></div>
+        <div>
+          <p id="notificationTitle" class="font-medium"></p>
+          <p id="notificationMessage" class="text-sm text-gray-600"></p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="loginScreen"
+      class="min-h-screen flex items-center justify-center velvet-gradient p-6"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div class="text-center mb-8">
+          <div
+            class="w-20 h-20 bg-gradient-to-r from-velvet-purple to-velvet-pink rounded-2xl flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="text-white font-bold text-3xl">R</span>
+          </div>
+          <h1 class="text-3xl font-bold gradient-text">R-Cash</h1>
+          <p class="text-gray-600 mt-2">Smart Cash Management</p>
+        </div>
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 mb-2">Phone Number</label>
+            <div class="relative">
+              <span class="absolute left-3 top-3 text-gray-500">+880</span
+              ><input
+                type="tel"
+                id="phoneNumber"
+                class="w-full pl-16 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none velvet-input"
+                placeholder="1712345678"
+                required
+                maxlength="10"
+                pattern="[0-9]{10}"
+              />
+            </div>
+            <div id="phoneError" class="error-message"></div>
+          </div>
+          <div>
+            <label class="block text-gray-700 mb-2">PIN</label
+            ><input
+              type="password"
+              id="pin"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none velvet-input"
+              placeholder="Enter your PIN"
+              maxlength="4"
+              required
+            />
+            <div id="pinError" class="error-message"></div>
+          </div>
+          <button
+            type="submit"
+            class="w-full velvet-button text-white py-3 rounded-lg font-medium"
+          >
+            Login
+          </button>
+        </form>
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            Don't have an account?
+            <a
+              href="#"
+              onclick="showSignup()"
+              class="text-velvet-purple font-medium"
+              >Sign Up</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+      <div class="max-w-md mx-auto bg-gray-100 min-h-screen flex flex-col">
+        <header class="velvet-gradient text-white p-6 rounded-b-3xl shadow-lg">
+
+          <div class="flex justify-between items-center mb-6">
+            <div>
+
+              <p class="text-sm opacity-80">Good Morning</p>
+              <h1 class="text-xl font-bold flex items-center ">
+                <span id="userName"></span
+                >
+              </h1>
+            </div>
+
+            <div class="relative">
+
+              <i
+                class="fas fa-bell text-xl cursor-pointer"
+                onclick="showNotifications()"
+              ></i
+              ><span
+                id="notificationBadge"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-velvet-gold rounded-full"
+              ></span>
+            </div>
+          </div>
+          <div
+            class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-5 mb-6 flex justify-between items-center"
+          >
+            <div>
+              <p class="text-sm opacity-80 mb-1">Total Balance</p>
+              <h2 id="totalBalance" class="text-3xl font-bold"></h2>
+            </div>
+            <button
+              class="bg-white bg-opacity-30 rounded-full w-12 h-12 flex items-center justify-center text-xl quick-action cursor-pointer"
+              onclick="showModal('qrPaymentModal')"
+            >
+              <i class="fas fa-qrcode"></i>
+            </button>
+          </div>
+          <div class="grid grid-cols-4 gap-4">
+            <div class="text-center" onclick="showModal('sendMoneyModal')">
+              <div class="quick-action-icon">
+                <i class="fas fa-paper-plane text-xl"></i>
+              </div>
+              <p class="text-xs">Send</p>
+            </div>
+            <div class="text-center" onclick="showModal('requestMoneyModal')">
+              <div class="quick-action-icon">
+                <i class="fas fa-hand-holding-usd text-xl"></i>
+              </div>
+              <p class="text-xs">Request</p>
+            </div>
+            <div class="text-center" onclick="showModal('addMoneyModal')">
+              <div class="quick-action-icon">
+                <i class="fas fa-plus-circle text-xl"></i>
+              </div>
+              <p class="text-xs">Add</p>
+            </div>
+            <div class="text-center" onclick="showModal('billPayModal')">
+              <div class="quick-action-icon">
+                <i class="fas fa-file-invoice-dollar text-xl"></i>
+              </div>
+              <p class="text-xs">Bills</p>
+            </div>
+          </div>
+        </header>
+        <main class="flex-1 overflow-y-auto p-6 pb-24">
+          <div class="mb-8 relative overflow-hidden rounded-2xl">
+            <div
+              id="adCarousel"
+              class="flex transition-transform duration-500 ease-in-out"
+            >
+              <div
+                class="ad-banner p-5 text-white flex-shrink-0 w-full relative ad-bg-1"
+                onclick="showAdClickModal('Special Offer!', 'Get 5% cashback on all transactions this month')"
+              >
+                <div class="relative z-10">
+                  <h3>Special Offer!</h3>
+                  <p>Get 5% cashback on transactions.</p>
+                  <button
+                    class="bg-white text-velvet-purple px-4 py-2 mt-2 rounded-lg text-sm font-medium"
+                  >
+                    Learn More
+                  </button>
+                </div>
+              </div>
+              <div
+                class="ad-banner p-5 text-white flex-shrink-0 w-full relative ad-bg-2"
+                onclick="showAdClickModal('Refer & Earn!', 'Invite friends and earn $10 for each successful referral')"
+              >
+                <div class="relative z-10">
+                  <h3>Refer & Earn!</h3>
+                  <p>Invite friends & earn $10 each.</p>
+                  <button
+                    class="bg-white text-velvet-blue px-4 py-2 mt-2 rounded-lg text-sm font-medium"
+                  >
+                    Refer Now
+                  </button>
+                </div>
+              </div>
+              <div
+                class="ad-banner p-5 text-white flex-shrink-0 w-full relative ad-bg-3"
+                onclick="showAdClickModal('Pay Bills On Time!', 'Never miss a due date. Set auto-pay for your bills')"
+              >
+                <div class="relative z-10">
+                  <h3>Pay Bills On Time!</h3>
+                  <p>Set auto-pay for your bills.</p>
+                  <button
+                    class="bg-white text-velvet-orange px-4 py-2 mt-2 rounded-lg text-sm font-medium"
+                  >
+                    Set Up
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-20"
+            >
+              <span class="carousel-dot active" data-slide="0"></span
+              ><span class="carousel-dot" data-slide="1"></span
+              ><span class="carousel-dot" data-slide="2"></span>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold mb-4">Services</h3>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="service-item" onclick="showModal('cashInModal')">
+              <div class="service-icon bg-velvet-purple/10">
+                <i class="fas fa-arrow-down text-velvet-purple font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400 ">Cash In</p>
+            </div>
+            <div class="service-item" onclick="showModal('cashOutModal')">
+              <div class="service-icon bg-velvet-pink/10">
+                <i class="fas fa-arrow-up text-velvet-pink font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Cash Out</p>
+            </div>
+            <div
+              class="service-item"
+              onclick="showModal('transferToBankModal')"
+            >
+              <div class="service-icon bg-velvet-blue/10">
+                <i class="fas fa-university text-velvet-blue font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">To Bank</p>
+            </div>
+            <div
+              class="service-item"
+              onclick="showModal('mobileRechargeModal')"
+            >
+              <div class="service-icon bg-velvet-gold/10">
+                <i class="fas fa-mobile-alt text-velvet-gold font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Recharge</p>
+            </div>
+            <div class="service-item" onclick="showTab('offers')">
+              <div class="service-icon bg-velvet-orange/10">
+                <i class="fas fa-gift text-velvet-orange font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Offers</p>
+            </div>
+            <div class="service-item" onclick="underMaintenance('Savings')">
+              <div class="service-icon bg-green-400/10">
+                <i class="fas fa-piggy-bank text-green-500 font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Savings</p>
+            </div>
+            <div class="service-item" onclick="underMaintenance('Loans')">
+              <div class="service-icon bg-indigo-400/10">
+                <i class="fas fa-hand-holding-usd text-indigo-500 font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Education Fee</p>
+            </div>
+            <div class="service-item" onclick="underMaintenance('Loans')">
+              <div class="service-icon bg-yellow-400/10">
+                <i class="fas fa-hand-holding-usd text-indigo-500 font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Loans</p>
+            </div>
+            <div class="service-item" onclick="showTab('moreServices')">
+              <div class="service-icon bg-gray-200">
+                <i class="fas fa-ellipsis-h text-gray-600 font-extrabold text-[16px]"></i>
+              </div>
+              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400 font-extrabold text-[16px]">More</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="tabContainer" class=" inset-0 bg-gray-100 z-40 hidden">
+      <div class="max-w-md mx-auto bg-gray-100 min-h-screen flex flex-col">
+        <div id="transactionsTab" class="tab-content">
+          <header class="velvet-gradient text-white p-6 flex-shrink-0">
+            <div class="flex items-center mb-4">
+              <button onclick="closeTab()" class="mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+              </button>
+              <h2 class="text-xl font-bold">Transaction History</h2>
+            </div>
+            <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 mb-4">
+              <h3 class="text-lg font-bold mb-2">Summary</h3>
+              <div class="summary-row">
+                <p>This Month IN:</p>
+                <p
+                  id="thisMonthIncome"
+                  class="font-semibold text-green-300"
+                ></p>
+              </div>
+              <div class="summary-row">
+                <p>This Month OUT:</p>
+                <p id="thisMonthExpense" class="font-semibold text-red-300"></p>
+              </div>
+              <div class="summary-row">
+                <p>Total IN:</p>
+                <p id="allTimeIncome" class="font-semibold"></p>
+              </div>
+              <div class="summary-row border-none">
+                <p>Total OUT:</p>
+                <p id="allTimeExpense" class="font-semibold"></p>
+              </div>
+            </div>
+            <div>
+              <label
+                for="transactionFilter"
+                class="block text-sm font-medium mb-2 opacity-80"
+                >Filter Transactions:</label
+              ><select
+                id="transactionFilter"
+                class="w-full p-2 border border-gray-300 rounded-lg text-gray-800 velvet-input bg-white/90"
+              >
+                <option value="all">All Transactions</option>
+                <option value="cash_in">Cash In</option>
+                <option value="cash_out">Cash Out</option>
+                <option value="send">Send Money</option>
+                <option value="request">Request Money</option>
+                <option value="add">Add Money</option>
+                <option value="bill_pay">Bill Pay</option>
+                <option value="mobile_recharge">Mobile Recharge</option>
+                <option value="qr_pay">QR Pay</option>
+              </select>
+            </div>
+          </header>
+          <div class="flex-1 overflow-y-auto p-4 pb-24">
+            <div id="transactionList" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <div id="offersTab" class="tab-content">
+          <header class="velvet-gradient text-white p-6 flex-shrink-0">
+            <div class="flex items-center mb-4">
+              <button onclick="closeTab()" class="mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+              </button>
+              <h2 class="text-xl font-bold">Special Offers</h2>
+            </div>
+            <div class="flex border-b border-white/20">
+              <button
+                id="currentOffersBtn"
+                class="offer-tab-btn active"
+                onclick="switchOfferTab('current')"
+              >
+                Current</button
+              ><button
+                id="endedOffersBtn"
+                class="offer-tab-btn"
+                onclick="switchOfferTab('ended')"
+              >
+                Ended
+              </button>
+            </div>
+          </header>
+          <div class="flex-1 overflow-y-auto p-4 pb-24 space-y-6">
+            <div
+              id="currentOffersContent"
+              class="offer-tab-content active space-y-4"
+            >
+              <div>
+                <h3 class="font-bold text-lg mb-2 px-2">
+                  Cashback & Discounts
+                </h3>
+                <div
+                  class="ad-banner p-5 text-white relative ad-bg-1 cursor-pointer"
+                  onclick="showAdClickModal('5% Cashback!', 'Get 5% cashback on all utility bill payments.')"
+                >
+                  <div class="relative z-10">
+                    <h3>5% Cashback!</h3>
+                    <p>On utility bill payments.</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg mb-2 px-2">
+                  Cashback & Discounts
+                </h3>
+                <div
+                  class="ad-banner p-5 text-white relative ad-bg-1 cursor-pointer"
+                  onclick="showAdClickModal('5% Cashback!', 'Get 5% cashback on all utility bill payments.')"
+                >
+                  <div class="relative z-10">
+                    <h3>5% Cashback!</h3>
+                    <p>On utility bill payments.</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg mb-2 px-2">
+                  Cashback & Discounts
+                </h3>
+                <div
+                  class="ad-banner p-5 text-white relative ad-bg-1 cursor-pointer"
+                  onclick="showAdClickModal('5% Cashback!', 'Get 5% cashback on all utility bill payments.')"
+                >
+                  <div class="relative z-10">
+                    <h3>5% Cashback!</h3>
+                    <p>On utility bill payments.</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg mb-2 px-2">Partner Deals</h3>
+                <div class="space-y-4">
+                  <div
+                    class="ad-banner p-5 text-white relative ad-bg-3 cursor-pointer"
+                    onclick="showAdClickModal('Movie Tickets', 'Buy one get one free on movie tickets every Friday.')"
+                  >
+                    <div class="relative z-10">
+                      <h3>Movie BOGO</h3>
+                      <p>Buy one get one free on Fridays.</p>
+                    </div>
+                  </div>
+                  <div
+                    class="ad-banner p-5 text-white relative ad-bg-4 cursor-pointer"
+                    onclick="showAdClickModal('First Transaction Offer', '20% discount on your first QR payment.')"
+                  >
+                    <div class="relative z-10">
+                      <h3>First Timer?</h3>
+                      <p>20% off your first QR payment.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg mb-2 px-2">Referrals</h3>
+                <div
+                  class="ad-banner p-5 text-white relative ad-bg-2 cursor-pointer"
+                  onclick="showAdClickModal('Refer & Earn!', 'Invite friends and earn $10 for each successful referral.')"
+                >
+                  <div class="relative z-10">
+                    <h3>Refer & Earn!</h3>
+                    <p>Invite friends, earn $10 each.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="endedOffersContent" class="offer-tab-content">
+              <div class="text-center p-8 bg-white rounded-lg shadow-sm">
+                <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+                <h4 class="font-bold text-lg">No Ended Offers</h4>
+                <p class="text-gray-600">
+                  All our great offers are currently active!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="walletTab" class="tab-content">
+          <header class="velvet-gradient text-white p-6 flex-shrink-0">
+            <div class="flex items-center">
+              <button onclick="closeTab()" class="mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+              </button>
+              <h2 class="text-xl font-bold">Wallet</h2>
+            </div>
+          </header>
+          <div class="flex-1 overflow-y-auto p-6 pb-24 space-y-6">
+            <div class="space-y-4">
+              <h4 class="text-lg font-bold">My Account</h4>
+              <div class="info-card justify-between">
+                <span class="font-medium">Account Number</span
+                ><span id="walletAccountNumber"></span>
+              </div>
+              <div class="info-card justify-between">
+                <span class="font-medium">Current Balance</span
+                ><span
+                  id="walletCurrentBalance"
+                  class="font-bold text-green-600"
+                ></span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <h4 class="text-lg font-bold">Settings & Support</h4>
+              <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Change Email/Number')"
+                >
+                  <i class="fas fa-envelope settings-icon"></i>
+                  <p>Change Email/Number</p>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="showModal('changePinModal')"
+                >
+                  <i class="fas fa-key settings-icon"></i>
+                  <p>Change PIN/Password</p>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Terms and Conditions')"
+                >
+                  <i class="fas fa-file-contract settings-icon"></i>
+                  <p>Terms & Conditions</p>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Contact Support')"
+                >
+                  <i class="fas fa-headset settings-icon"></i>
+                  <p>Contact Support</p>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="profileTab" class="tab-content">
+          <header class="velvet-gradient text-white p-6 flex-shrink-0">
+            <div class="flex items-center">
+              <button onclick="closeTab()" class="mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+              </button>
+              <h2 class="text-xl font-bold">Profile</h2>
+            </div>
+          </header>
+          <div class="flex-1 overflow-y-auto p-6 pb-24">
+            <div class="text-center mb-6">
+              <div
+                class="w-24 h-24 bg-gradient-to-r from-velvet-purple to-velvet-pink rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <span class="text-white font-bold text-4xl">R</span>
+              </div>
+              <h4 id="profileTabName" class="text-2xl font-bold"></h4>
+              <p id="profileTabPhone" class="text-gray-600"></p>
+            </div>
+            <div class="info-card flex-col space-y-2 !items-stretch">
+              <div class="summary-row">
+                <span class="text-gray-600">Account Number</span
+                ><span id="profileTabAccountNumber" class="font-medium"></span>
+              </div>
+              <div class="summary-row">
+                <span class="text-gray-600">Email</span
+                ><span id="profileTabEmail" class="font-medium"></span>
+              </div>
+              <div class="summary-row border-none">
+                <span class="text-gray-600">Member Since</span
+                ><span class="font-medium">Jan 2023</span>
+              </div>
+            </div>
+            <button
+              onclick="showModal('changePinModal')"
+              class="w-full bg-velvet-purple text-white py-3 rounded-lg font-medium mb-3 mt-6"
+            >
+              Change PIN</button
+            ><button
+              onclick="logout()"
+              class="w-full bg-red-500 text-white py-3 rounded-lg font-medium"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+
+        <div id="moreServicesTab" class="tab-content">
+          <header class="velvet-gradient text-white p-6 flex-shrink-0">
+            <div class="flex items-center">
+              <button onclick="closeTab()" class="mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+              </button>
+              <h2 class="text-xl font-bold">More Services</h2>
+            </div>
+          </header>
+          <div class="flex-1 overflow-y-auto p-6 pb-24 space-y-6">
+            <div>
+              <h3 class="font-bold text-lg mb-2">Financial Tools</h3>
+              <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Loan Applications')"
+                >
+                  <i
+                    class="fas fa-hand-holding-usd settings-icon text-velvet-purple"
+                  ></i>
+                  <div>
+                    <p class="font-semibold">Loan Applications</p>
+                    <p class="text-xs text-gray-500">
+                      Check eligibility and apply for personal loans.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Savings Plans')"
+                >
+                  <i
+                    class="fas fa-piggy-bank settings-icon text-velvet-gold"
+                  ></i>
+                  <div>
+                    <p class="font-semibold">Savings Plans</p>
+                    <p class="text-xs text-gray-500">
+                      Start saving with our high-interest plans.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg mb-2">Account Management</h3>
+              <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Statements')"
+                >
+                  <i
+                    class="fas fa-file-invoice settings-icon text-velvet-blue"
+                  ></i>
+                  <p>Statements</p>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Limits & Fees')"
+                >
+                  <i
+                    class="fas fa-tachometer-alt settings-icon text-velvet-orange"
+                  ></i>
+                  <p>Limits & Fees</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg mb-2">Join Our Team</h3>
+              <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Merchant Services')"
+                >
+                  <i class="fas fa-store settings-icon text-green-500"></i>
+                  <div>
+                    <p class="font-semibold">Become a Merchant</p>
+                    <p class="text-xs text-gray-500">
+                      Accept payments and grow your business.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="settings-item"
+                  onclick="underMaintenance('Careers')"
+                >
+                  <i class="fas fa-briefcase settings-icon text-indigo-500"></i>
+                  <div>
+                    <p class="font-semibold">Careers at R-Cash</p>
+                    <p class="text-xs text-gray-500">
+                      View open positions and join our mission.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sendMoneyModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('sendMoneyModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Send Money</h3>
+        <form id="sendMoneyForm">
+          <label>Recipient Phone</label>
+          <div class="relative">
+            <span class="input-prefix">+880</span
+            ><input
+              type="tel"
+              id="sendRecipient"
+              class="input-field pl-16"
+              placeholder="1712345678"
+              required
+               maxlength="10"
+                pattern="[0-9]{10}"
+            />
+          </div>
+          <div id="sendRecipientError" class="error-message"></div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="sendAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="requestMoneyModal" class="modal">
+      <div class="modal-content">
+        <button
+          onclick="closeModal('requestMoneyModal')"
+          class="modal-close-btn"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Request Money</h3>
+        <form id="requestMoneyForm">
+          <label>From Phone</label>
+          <div class="relative">
+            <span class="input-prefix">+880</span
+            ><input
+              type="tel"
+              id="requestFrom"
+              class="input-field pl-16"
+              placeholder="1712345678"
+              required
+               maxlength="10"
+                pattern="[0-9]{10}"
+            />
+          </div>
+          <div id="requestFromError" class="error-message"></div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="requestAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="addMoneyModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('addMoneyModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Add Money</h3>
+        <form id="addMoneyForm">
+          <label>Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="addAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <p class="text-xs text-center text-gray-500 mt-2">
+            From your linked bank account.
+          </p>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="billPayModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('billPayModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Pay Bill</h3>
+        <form id="billPayForm">
+          <label>Select Biller</label>
+          <div class="space-y-3 mb-4">
+            <div
+              class="selection-item"
+              onclick="selectBiller(event, 'Electricity')"
+            >
+              <i class="fas fa-bolt text-velvet-gold text-xl mr-3"></i>
+              <p>Electricity</p>
+            </div>
+            <div class="selection-item" onclick="selectBiller(event, 'Water')">
+              <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
+              <p>Water</p>
+            </div>
+            <div class="selection-item" onclick="selectBiller(event, 'Water')">
+              <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
+              <p>Water</p>
+            </div>
+            <div class="selection-item" onclick="selectBiller(event, 'Water')">
+              <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
+              <p>Water</p>
+            </div>
+          </div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="billAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="cashInModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('cashInModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Cash In</h3>
+        <form id="cashInForm">
+          <label>Agent Phone</label>
+          <div class="relative">
+            <span class="input-prefix">+880</span
+            ><input
+              type="tel"
+              id="cashInAgentNumber"
+              class="input-field pl-16"
+              placeholder="1712345678"
+              required
+               maxlength="10"
+                pattern="[0-9]{10}"
+            />
+          </div>
+          <div id="cashInAgentError" class="error-message"></div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="cashInAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="cashOutModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('cashOutModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Cash Out</h3>
+        <form id="cashOutForm">
+          <label>Agent Phone</label>
+          <div class="relative">
+            <span class="input-prefix">+880</span
+            ><input
+              type="tel"
+              id="cashOutAgentNumber"
+              class="input-field pl-16"
+              placeholder="1712345678"
+              required
+               maxlength="10"
+                pattern="[0-9]{10}"
+            />
+          </div>
+          <div id="cashOutAgentError" class="error-message"></div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="cashOutAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="transferToBankModal" class="modal">
+      <div class="modal-content">
+        <button
+          onclick="closeModal('transferToBankModal')"
+          class="modal-close-btn"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Transfer to Bank</h3>
+        <form id="transferToBankForm">
+          <label>Select Bank</label>
+          <div class="space-y-3 mb-4">
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'City Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>City Bank- 5808XXXXXX148</p>
+            </div>
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'Brac Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>Brac Bank- 4200XXXXXX305</p>
+            </div>
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'National Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>National Bank- 1814XXXXXX198</p>
+            </div>
+          </div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="transferToBankAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="mobileRechargeModal" class="modal">
+      <div class="modal-content">
+        <button
+          onclick="closeModal('mobileRechargeModal')"
+          class="modal-close-btn"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Mobile Recharge</h3>
+        <form id="mobileRechargeForm">
+          <label>Mobile Number</label>
+          <div class="relative">
+            <span class="input-prefix">+880</span
+            ><input
+              type="tel"
+              id="mobileNumber"
+              class="input-field pl-16"
+              placeholder="1712345678"
+              required
+               maxlength="10"
+                pattern="[0-9]{10}"
+            />
+          </div>
+          <div id="mobileNumberError" class="error-message"></div>
+          <label class="mt-4">Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="rechargeAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Proceed</button>
+        </form>
+      </div>
+    </div>
+    <div id="qrPaymentModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('qrPaymentModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">QR Payment</h3>
+        <form id="qrPaymentForm">
+          <div class="text-center mb-4">
+            <i class="fas fa-qrcode text-8xl text-gray-800"></i>
+            <p class="text-gray-600 mt-2">Pay any merchant instantly.</p>
+          </div>
+          <label>Amount</label>
+          <div class="relative">
+            <span class="input-prefix">$</span
+            ><input
+              type="number"
+              id="qrAmount"
+              class="input-field pl-8"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <button type="submit" class="modal-button">Confirm Payment</button>
+        </form>
+      </div>
+    </div>
+    <div id="changePinModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('changePinModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Change PIN</h3>
+        <form id="changePinForm">
+          <label>Current PIN</label
+          ><input
+            type="password"
+            id="currentPin"
+            class="input-field"
+            maxlength="4"
+            required
+          /><label class="mt-4">New PIN</label
+          ><input
+            type="password"
+            id="newPin"
+            class="input-field"
+            maxlength="4"
+            required
+          /><label class="mt-4">Confirm New PIN</label
+          ><input
+            type="password"
+            id="confirmNewPin"
+            class="input-field"
+            maxlength="4"
+            required
+          /><button type="submit" class="modal-button">Change PIN</button>
+        </form>
+      </div>
+    </div>
+    <div id="pinConfirmModal" class="modal">
+      <div class="modal-content">
+        <button onclick="closeModal('pinConfirmModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="modal-title">Confirm Transaction</h3>
+        <div class="info-card flex-col !items-stretch my-4">
+          <div class="summary-row">
+            <span class="text-gray-600">Type</span
+            ><span id="confirmDetailType" class="font-semibold"></span>
+          </div>
+          <div class="summary-row">
+            <span class="text-gray-600">To / From</span
+            ><span id="confirmDetailParty" class="font-semibold"></span>
+          </div>
+          <div class="summary-row border-none">
+            <span class="text-gray-600">Amount</span
+            ><span
+              id="confirmDetailAmount"
+              class="font-semibold text-xl text-velvet-purple"
+            ></span>
+          </div>
+        </div>
+        <form id="pinConfirmForm">
+          <label>Enter PIN to Confirm</label
+          ><input
+            type="password"
+            id="pinConfirmationInput"
+            class="input-field text-center tracking-[1rem]"
+            maxlength="4"
+            required
+          />
+          <div
+            id="pinConfirmationError"
+            class="error-message text-center"
+          ></div>
+          <button type="submit" class="modal-button">Confirm</button>
+        </form>
+      </div>
+    </div>
+    <div id="transactionConfirmModal" class="modal">
+      <div class="modal-content text-center">
+        <i
+          class="fas fa-check-circle text-green-500 text-6xl mb-4 animate-bounce"
+        ></i>
+        <h3 class="text-2xl font-bold mb-2">Success!</h3>
+        <p class="text-gray-700 text-lg mb-4">Your transaction is complete.</p>
+        <div class="info-card flex-col !items-stretch my-4 text-left">
+          <div class="summary-row">
+            <span class="text-gray-600">Transaction ID:</span
+            ><span
+              id="invoiceTxnId"
+              class="font-mono text-xs font-bold text-velvet-purple"
+            ></span>
+          </div>
+          <div class="summary-row">
+            <span class="text-gray-600">Type:</span
+            ><span id="invoiceType" class="font-bold"></span>
+          </div>
+          <div class="summary-row">
+            <span class="text-gray-600">Amount:</span
+            ><span
+              id="invoiceAmount"
+              class="font-bold text-2xl text-green-600"
+            ></span>
+          </div>
+          <div class="summary-row border-none">
+            <span class="text-gray-600">New Balance:</span
+            ><span id="invoiceBalance" class="font-bold"></span>
+          </div>
+        </div>
+        <button
+          onclick="closeModal('transactionConfirmModal')"
+          class="w-full velvet-button text-white py-3 rounded-lg font-medium"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+    <div id="adClickModal" class="modal">
+      <div class="modal-content text-center">
+        <i class="fas fa-handshake text-6xl text-velvet-purple mb-4"></i>
+        <h3 id="adModalTitle" class="text-2xl font-bold mb-2"></h3>
+        <p id="adModalMessage" class="text-gray-700"></p>
+        <button onclick="closeModal('adClickModal')" class="modal-button">
+          Got It!
+        </button>
+      </div>
+    </div>
+
+    <nav
+      class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 max-w-md mx-auto z-50"
+    >
+      <div class="grid grid-cols-5 py-2">
+        <a href="#" class="bottom-nav-item active" onclick="showTab('home')"
+          ><i class="fas fa-home text-xl mb-1"></i
+          ><span class="text-xs">Home</span></a
+        ><a href="#" class="bottom-nav-item" onclick="showTab('transactions')"
+          ><i class="fas fa-history text-xl mb-1"></i
+          ><span class="text-xs">History</span></a
+        ><a href="#" class="bottom-nav-item" onclick="showTab('wallet')"
+          ><i class="fas fa-wallet text-xl mb-1"></i
+          ><span class="text-xs">Wallet</span></a
+        ><a href="#" class="bottom-nav-item" onclick="showTab('offers')"
+          ><i class="fas fa-gift text-xl mb-1"></i
+          ><span class="text-xs">Offers</span></a
+        ><a href="#" class="bottom-nav-item" onclick="showTab('profile')"
+          ><i class="fas fa-user text-xl mb-1"></i
+          ><span class="text-xs">Profile</span></a
+        >
+      </div>
+    </nav>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>
