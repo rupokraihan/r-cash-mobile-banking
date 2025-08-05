@@ -42,7 +42,7 @@ To get a local copy up and running, follow these simple steps:
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/your-username/r-cash-repository.git](https://github.com/your-username/r-cash-repository.git)
+    git clone [https://github.com/rupokraihan/r-cash-mobile-banking.git](https://github.com/rupokraihan/r-cash-mobile-banking.git)
     ```
 2.  **Navigate to the project folder:**
     ```sh
