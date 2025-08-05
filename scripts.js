@@ -9,7 +9,7 @@ let autoSlideInterval = null;
 
 const CATEGORIES = {
   SEND: "send",
-  REQUEST: "request",
+  payment: "payment",
   ADD: "add",
   BILL_PAY: "bill_pay",
   CASH_IN: "cash_in",
@@ -53,9 +53,9 @@ function setupEventListeners() {
       preProcessTransaction(e, CATEGORIES.SEND)
     );
   document
-    .getElementById("requestMoneyForm")
+    .getElementById("paymentMoneyForm")
     .addEventListener("submit", (e) =>
-      preProcessTransaction(e, CATEGORIES.REQUEST)
+      preProcessTransaction(e, CATEGORIES.payment)
     );
   document
     .getElementById("addMoneyForm")
@@ -274,7 +274,9 @@ function loadTransactionHistory(filter = "all") {
                     </div>
                     <div class="flex-1">
                         <p class="font-semibold">${t.title}</p>
-                        <p class="text-xs text-gray-500 font-medium">${t.party}</p>
+                        <p class="text-xs text-gray-500 font-medium">${
+                          t.party
+                        }</p>
                         <p class="text-xs text-gray-500">TrxID : ${t.txnId}</p>
 
                     </div>
@@ -285,8 +287,16 @@ function loadTransactionHistory(filter = "all") {
                             ${isIncome ? "+" : "-"}$${t.amount.toFixed(2)}
                         </p>
                         <p class="flex gap-3">
-                        <span class="text-xs text-gray-400">${formatTime(t.date)}</span>
-                        <span class="text-xs text-gray-400">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        <span class="text-xs text-gray-400">${formatTime(
+                          t.date
+                        )}</span>
+                        <span class="text-xs text-gray-400">${new Date(
+                          t.date
+                        ).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}</span>
                         </p>
 
                     </div>
@@ -455,26 +465,17 @@ function preProcessTransaction(e, category) {
         color: "purple",
       };
       break;
-    case CATEGORIES.REQUEST:
+    case CATEGORIES.payment:
       details = {
         ...details,
-        party: `+880 ${getVal("requestFrom")}`,
-        title: "Request Money",
-        amount: getNum("requestAmount"),
+        party: `+880 ${getVal("paymentFrom")}`,
+        title: "payment Money",
+        amount: getNum("paymentAmount"),
         icon: "fas fa-hand-holding-usd",
         color: "orange",
       };
       break;
-    case CATEGORIES.ADD:
-      details = {
-        ...details,
-        title: "Add Money",
-        amount: getNum("addAmount"),
-        party: "From Linked Bank",
-        icon: "fas fa-plus-circle",
-        color: "green",
-      };
-      break;
+
     case CATEGORIES.BILL_PAY:
       if (!selectedBiller) {
         showNotification(
@@ -485,6 +486,27 @@ function preProcessTransaction(e, category) {
         details.isValid = false;
         break;
       }
+
+    case CATEGORIES.ADD:
+      // 1. Check if a source bank was selected from the list
+      if (!selectedBank) {
+        showNotification(
+          "error",
+          "Selection Required",
+          "Please select a source bank."
+        );
+        details.isValid = false;
+        break; // Stop processing if no bank is selected
+      }
+       details = {
+      ...details,
+      title: "Add Money",
+      amount: getNum("addAmount"), // Get amount from the input
+      party: `From ${selectedBank}`, // Use the selected bank as the party
+      icon: "fas fa-plus-circle",
+      color: "green",
+    };
+    break;
       details = {
         ...details,
         title: `${selectedBiller} Bill`,
@@ -524,15 +546,28 @@ function preProcessTransaction(e, category) {
         details.isValid = false;
         break;
       }
+    case CATEGORIES.ADD:
+      if (!selectedBank) {
+        showNotification(
+          "error",
+          "Selection Required",
+          "Please select a bank."
+        );
+        details.isValid = false;
+        break;
+      }
       details = {
         ...details,
         title: "Transfer to Bank",
         amount: getNum("transferToBankAmount"),
-        party: selectedBank,
+        party: `To ${selectedBank}`,
         icon: "fas fa-university",
         color: "blue",
       };
       break;
+
+
+
     case CATEGORIES.MOBILE_RECHARGE:
       details = {
         ...details,
@@ -568,6 +603,7 @@ function preProcessTransaction(e, category) {
     CATEGORIES.TO_BANK,
     CATEGORIES.MOBILE_RECHARGE,
     CATEGORIES.QR_PAY,
+    CATEGORIES.payment,
   ].includes(category);
   if (isExpense && details.amount > balance) {
     showNotification(
@@ -726,10 +762,10 @@ function updateClock() {
   } // Evening until 4 AM
   document.querySelector("#mainApp p.text-sm.opacity-80").textContent =
     greeting;
-  document.getElementById("realTimeClock").textContent = now.toLocaleTimeString(
-    "en-US",
-    { hour: "2-digit", minute: "2-digit" }
-  );
+  //   document.getElementById("realTimeClock").textContent = now.toLocaleTimeString(
+  //     "en-US",
+  //     { hour: "2-digit", minute: "2-digit" }
+  //   );
 }
 function formatTime(date) {
   return new Date(date).toLocaleTimeString("en-US", {

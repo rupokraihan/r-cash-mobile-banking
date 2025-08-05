@@ -75,6 +75,7 @@
                 required
                 maxlength="10"
                 pattern="[0-9]{10}"
+                autocomplete="off"
               />
             </div>
             <div id="phoneError" class="error-message"></div>
@@ -88,6 +89,7 @@
               placeholder="Enter your PIN"
               maxlength="4"
               required
+              autocomplete="off"
             />
             <div id="pinError" class="error-message"></div>
           </div>
@@ -115,22 +117,18 @@
     <div id="mainApp" class="hidden">
       <div class="max-w-md mx-auto bg-gray-100 min-h-screen flex flex-col">
         <header class="velvet-gradient text-white p-6 rounded-b-3xl shadow-lg">
-
           <div class="flex justify-between items-center mb-6">
             <div>
-
               <p class="text-sm opacity-80">Good Morning</p>
-              <h1 class="text-xl font-bold flex items-center ">
-                <span id="userName"></span
-                >
+              <h1 class="text-xl font-bold flex items-center">
+                <span id="userName"></span>
               </h1>
             </div>
 
             <div class="relative">
-
               <i
                 class="fas fa-bell text-xl cursor-pointer"
-                onclick="showNotifications()"
+                onclick="showTab('transactions')"
               ></i
               ><span
                 id="notificationBadge"
@@ -159,11 +157,11 @@
               </div>
               <p class="text-xs">Send</p>
             </div>
-            <div class="text-center" onclick="showModal('requestMoneyModal')">
+            <div class="text-center" onclick="showModal('paymentMoneyModal')">
               <div class="quick-action-icon">
-                <i class="fas fa-hand-holding-usd text-xl"></i>
+                <i class="fas fa-bag-shopping text-xl"></i>
               </div>
-              <p class="text-xs">Request</p>
+              <p class="text-xs">Payment</p>
             </div>
             <div class="text-center" onclick="showModal('addMoneyModal')">
               <div class="quick-action-icon">
@@ -240,70 +238,124 @@
           <div class="grid grid-cols-3 gap-3 text-center">
             <div class="service-item" onclick="showModal('cashInModal')">
               <div class="service-icon bg-velvet-purple/10">
-                <i class="fas fa-arrow-down text-velvet-purple font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-arrow-down text-velvet-purple font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400 ">Cash In</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Cash In
+              </p>
             </div>
             <div class="service-item" onclick="showModal('cashOutModal')">
               <div class="service-icon bg-velvet-pink/10">
-                <i class="fas fa-arrow-up text-velvet-pink font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-arrow-up text-velvet-pink font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Cash Out</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Cash Out
+              </p>
             </div>
             <div
               class="service-item"
               onclick="showModal('transferToBankModal')"
             >
               <div class="service-icon bg-velvet-blue/10">
-                <i class="fas fa-university text-velvet-blue font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-university text-velvet-blue font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">To Bank</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                To Bank
+              </p>
             </div>
             <div
               class="service-item"
               onclick="showModal('mobileRechargeModal')"
             >
-              <div class="service-icon bg-velvet-gold/10">
-                <i class="fas fa-mobile-alt text-velvet-gold font-extrabold text-[16px]"></i>
+              <div class="service-icon bg-yellow-300/10">
+                <i
+                  class="fas fa-mobile-alt text-yellow-600 font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Recharge</p>
-            </div>
-            <div class="service-item" onclick="showTab('offers')">
-              <div class="service-icon bg-velvet-orange/10">
-                <i class="fas fa-gift text-velvet-orange font-extrabold text-[16px]"></i>
-              </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Offers</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Recharge
+              </p>
             </div>
             <div class="service-item" onclick="underMaintenance('Savings')">
-              <div class="service-icon bg-green-400/10">
-                <i class="fas fa-piggy-bank text-green-500 font-extrabold text-[16px]"></i>
+              <div class="service-icon bg-green-400/5">
+                <i
+                  class="fas   fa-hand-peace text-green-600 font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Savings</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Request
+              </p>
+            </div>
+            <div class="service-item" onclick="underMaintenance('Savings')">
+              <div class="service-icon bg-pink-400/10">
+                <i
+                  class="fas fa-bookmark text-pink-500 font-extrabold text-[16px]"
+                ></i>
+              </div>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Savings
+              </p>
             </div>
             <div class="service-item" onclick="underMaintenance('Loans')">
               <div class="service-icon bg-indigo-400/10">
-                <i class="fas fa-hand-holding-usd text-indigo-500 font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-graduation-cap text-indigo-500 font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Education Fee</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Education Fee
+              </p>
             </div>
             <div class="service-item" onclick="underMaintenance('Loans')">
               <div class="service-icon bg-yellow-400/10">
-                <i class="fas fa-hand-holding-usd text-indigo-500 font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-hand-holding-usd text-indigo-500 font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400">Loans</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400"
+              >
+                Loans
+              </p>
             </div>
             <div class="service-item" onclick="showTab('moreServices')">
               <div class="service-icon bg-gray-200">
-                <i class="fas fa-ellipsis-h text-gray-600 font-extrabold text-[16px]"></i>
+                <i
+                  class="fas fa-ellipsis-h text-gray-600 font-extrabold text-[16px]"
+                ></i>
               </div>
-              <p class="text-[16px] font-semibold tracking-[0.5px] text-orange-400 font-extrabold text-[16px]">More</p>
+              <p
+                class="text-[16px] font-semibold tracking-[0.5px] text-orange-400 font-extrabold text-[16px]"
+              >
+                More
+              </p>
             </div>
           </div>
         </main>
       </div>
     </div>
 
-    <div id="tabContainer" class=" inset-0 bg-gray-100 z-40 hidden">
+    <div id="tabContainer" class="inset-0 bg-gray-100 z-40 hidden">
       <div class="max-w-md mx-auto bg-gray-100 min-h-screen flex flex-col">
         <div id="transactionsTab" class="tab-content">
           <header class="velvet-gradient text-white p-6 flex-shrink-0">
@@ -313,25 +365,25 @@
               </button>
               <h2 class="text-xl font-bold">Transaction History</h2>
             </div>
-            <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 mb-4">
-              <h3 class="text-lg font-bold mb-2">Summary</h3>
+            <div class="bg-white/5 backdrop-blur-sm rounded-2xl tracking-wider p-4 mb-4">
+              <h3 class="text-xl font-bold mb-2 ">Summary</h3>
               <div class="summary-row">
-                <p>This Month IN:</p>
+                <p>This Month In:</p>
                 <p
                   id="thisMonthIncome"
                   class="font-semibold text-green-300"
                 ></p>
               </div>
               <div class="summary-row">
-                <p>This Month OUT:</p>
+                <p>This Month Out:</p>
                 <p id="thisMonthExpense" class="font-semibold text-red-300"></p>
               </div>
               <div class="summary-row">
-                <p>Total IN:</p>
+                <p>Total In:</p>
                 <p id="allTimeIncome" class="font-semibold"></p>
               </div>
               <div class="summary-row border-none">
-                <p>Total OUT:</p>
+                <p>Total Out:</p>
                 <p id="allTimeExpense" class="font-semibold"></p>
               </div>
             </div>
@@ -348,7 +400,7 @@
                 <option value="cash_in">Cash In</option>
                 <option value="cash_out">Cash Out</option>
                 <option value="send">Send Money</option>
-                <option value="request">Request Money</option>
+                <option value="payment">Payment</option>
                 <option value="add">Add Money</option>
                 <option value="bill_pay">Bill Pay</option>
                 <option value="mobile_recharge">Mobile Recharge</option>
@@ -707,8 +759,9 @@
               class="input-field pl-16"
               placeholder="1712345678"
               required
-               maxlength="10"
-                pattern="[0-9]{10}"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              autocomplete="off"
             />
           </div>
           <div id="sendRecipientError" class="error-message"></div>
@@ -721,45 +774,48 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
         </form>
       </div>
     </div>
-    <div id="requestMoneyModal" class="modal">
+    <div id="paymentMoneyModal" class="modal">
       <div class="modal-content">
         <button
-          onclick="closeModal('requestMoneyModal')"
+          onclick="closeModal('paymentMoneyModal')"
           class="modal-close-btn"
         >
           <i class="fas fa-times"></i>
         </button>
-        <h3 class="modal-title">Request Money</h3>
-        <form id="requestMoneyForm">
+        <h3 class="modal-title">Payment</h3>
+        <form id="paymentMoneyForm">
           <label>From Phone</label>
           <div class="relative">
             <span class="input-prefix">+880</span
             ><input
               type="tel"
-              id="requestFrom"
+              id="paymentFrom"
               class="input-field pl-16"
               placeholder="1712345678"
               required
-               maxlength="10"
-                pattern="[0-9]{10}"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              autocomplete="off"
             />
           </div>
-          <div id="requestFromError" class="error-message"></div>
+          <div id="paymentFromError" class="error-message"></div>
           <label class="mt-4">Amount</label>
           <div class="relative">
             <span class="input-prefix">$</span
             ><input
               type="number"
-              id="requestAmount"
+              id="paymentAmount"
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -771,9 +827,34 @@
         <button onclick="closeModal('addMoneyModal')" class="modal-close-btn">
           <i class="fas fa-times"></i>
         </button>
-        <h3 class="modal-title">Add Money</h3>
+        <h3 class="modal-title">Add Money from Bank</h3>
         <form id="addMoneyForm">
-          <label>Amount</label>
+          <label>Select Source Bank</label>
+          <div class="space-y-3 mb-4">
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'City Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>City Bank- 5808XXXXXX148</p>
+            </div>
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'Brac Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>Brac Bank- 4200XXXXXX305</p>
+            </div>
+            <div
+              class="selection-item"
+              onclick="selectBank(event, 'National Bank')"
+            >
+              <i class="fas fa-university text-gray-500 text-xl mr-3"></i>
+              <p>National Bank- 1814XXXXXX198</p>
+            </div>
+          </div>
+
+          <label class="mt-4">Amount</label>
           <div class="relative">
             <span class="input-prefix">$</span
             ><input
@@ -784,10 +865,7 @@
               required
             />
           </div>
-          <p class="text-xs text-center text-gray-500 mt-2">
-            From your linked bank account.
-          </p>
-          <button type="submit" class="modal-button">Proceed</button>
+          <button type="submit" class="modal-button">Add Money</button>
         </form>
       </div>
     </div>
@@ -811,13 +889,13 @@
               <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
               <p>Water</p>
             </div>
-            <div class="selection-item" onclick="selectBiller(event, 'Water')">
-              <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
-              <p>Water</p>
+            <div class="selection-item" onclick="selectBiller(event, 'Internet Bill')">
+              <i class="fas fa-infinity text-red-600 text-xl mr-3"></i>
+              <p>Internet Bill</p>
             </div>
-            <div class="selection-item" onclick="selectBiller(event, 'Water')">
-              <i class="fas fa-tint text-velvet-blue text-xl mr-3"></i>
-              <p>Water</p>
+            <div class="selection-item" onclick="selectBiller(event, 'Gas Bill')">
+              <i class="fas fa-sun text-green-600 text-xl mr-3"></i>
+              <p>Gas Bill</p>
             </div>
           </div>
           <label class="mt-4">Amount</label>
@@ -829,6 +907,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -851,8 +930,9 @@
               class="input-field pl-16"
               placeholder="1712345678"
               required
-               maxlength="10"
-                pattern="[0-9]{10}"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              autocomplete="off"
             />
           </div>
           <div id="cashInAgentError" class="error-message"></div>
@@ -865,6 +945,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -887,8 +968,9 @@
               class="input-field pl-16"
               placeholder="1712345678"
               required
-               maxlength="10"
-                pattern="[0-9]{10}"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              autocomplete="off"
             />
           </div>
           <div id="cashOutAgentError" class="error-message"></div>
@@ -901,6 +983,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -950,6 +1033,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -975,8 +1059,9 @@
               class="input-field pl-16"
               placeholder="1712345678"
               required
-               maxlength="10"
-                pattern="[0-9]{10}"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              autocomplete="off"
             />
           </div>
           <div id="mobileNumberError" class="error-message"></div>
@@ -989,6 +1074,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Proceed</button>
@@ -1015,6 +1101,7 @@
               class="input-field pl-8"
               placeholder="0.00"
               required
+              autocomplete="off"
             />
           </div>
           <button type="submit" class="modal-button">Confirm Payment</button>
@@ -1035,6 +1122,7 @@
             class="input-field"
             maxlength="4"
             required
+            autocomplete="off"
           /><label class="mt-4">New PIN</label
           ><input
             type="password"
@@ -1042,6 +1130,7 @@
             class="input-field"
             maxlength="4"
             required
+            autocomplete="off"
           /><label class="mt-4">Confirm New PIN</label
           ><input
             type="password"
@@ -1049,6 +1138,7 @@
             class="input-field"
             maxlength="4"
             required
+            autocomplete="off"
           /><button type="submit" class="modal-button">Change PIN</button>
         </form>
       </div>
@@ -1084,6 +1174,7 @@
             class="input-field text-center tracking-[1rem]"
             maxlength="4"
             required
+            autocomplete="off"
           />
           <div
             id="pinConfirmationError"
